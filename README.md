@@ -8,5 +8,5 @@ University Project
 - [AngularJS Slider](http://angular-slider.github.io/angularjs-slider/)
 
 ## Written in
-- [Coffescript](http://coffeescript.org/)
+- [Coffeescript](http://coffeescript.org/)
 - Javascript
