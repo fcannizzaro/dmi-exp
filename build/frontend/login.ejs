@@ -1,0 +1,21 @@
+<html>
+<head>
+	<meta name="google-signin-client_id" content="<%= config.google_app_id %>">
+	<%- include head.ejs %>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<script type="text/javascript" src="js/authentication.js"></script>
+</head>
+<body>
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+		<header class="mdl-layout__header custom-header">
+			Progetto Probabilità
+		</header>
+		<main class="mdl-layout__content">
+			<div class="page-content login">
+				Accedi con il tuo account <b>community unipa</b><br><br>
+				<div class="g-signin2" data-onsuccess="onSignIn"></div>
+			</div>
+		</main>
+	</div>
+</body>
+</html>

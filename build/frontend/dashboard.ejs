@@ -1,0 +1,188 @@
+<html ng-app="dmi-exp">
+	<head>
+		<%- include head.ejs %>
+		<link rel="stylesheet" type="text/css" href="css/rzslider.css"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
+		<script src="/js/rzslider.min.js"></script>
+		<script type="text/javascript" src="js/app.js"></script>
+	</head>
+	<body ng-controller="ctrl">
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<span class="mdl-layout-title"><%= user.name %></span>
+				</div>
+				<div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+					<a href="#active-bets" class="mdl-layout__tab is-active">Scommesse attive</a>
+					<a href="#past-bets" class="mdl-layout__tab">Scommesse passate</a>
+					<a href="#rank-cumulative" class="mdl-layout__tab">Classifica RPS</a>
+					<a href="#rank-euclidea" class="mdl-layout__tab">Euclidea *</a>
+				</div>
+			</header>
+			<main class="mdl-layout__content">
+			<section class="mdl-layout__tab-panel is-active" id="active-bets">
+				<div class="page-content">
+					<% if (!user.paid ) { %>
+					<div class="banner">
+						Paga la tua quota per iniziare a scommettere!
+						<a href="/pay"><img class="paypal" type="image" width="80" src="/images/pp.png" border="0"></a>
+					</div>
+					<div class="not">Scommesse non disponibili</div>
+					<% } else {
+					if (active.length > 0) { %>%>
+					<div class="bottombar">
+						<h4 class="week">Settimana <b><%= week %></b></h4>
+						<button ng-if="!secureBet" ng-click="setSecure()" class="bet"><b>SCOMMETTI</b></button>
+						<button ng-if="secureBet" ng-click="bet()" class="bet valid"><b>SICURO ?</b></button>
+					</div>
+					<div ng-if="counter.valid" class="time">{{counter.text}} rimanenti</div>
+					<a href="/season" target="_blank">
+						<button class="mdl-button mdl-js-button mdl-button--raised res-button mdl-button--primary">Risultati Stagione 2015/2016</button>
+					</a>
+					<%  } %>
+					<ul>
+						<% for(var i = 0; i < active.length; i++) {
+						var match = active[i];
+						var label = match.home + ":"+ match.opposing; %>
+						<li ng-init="init('<%= label %>')" class="list-item mdl-shadow--2dp no-sel">
+							<div class="date"><%= match.date.replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1") %> <%= match.time %></div>
+							<div class="half-container no-sel">
+								<div class="half"><%= match.home %></div>
+								<div class="half"><%= match.opposing %></div>
+							</div>
+							<canvas id="<%= label %>" width="164" height="164"></canvas>
+							<div class="legend">
+								<div class="legend-item"><div></div>1</div>
+								<div class="legend-item"><div class="parity"></div>X</div>
+								<div class="legend-item"><div class="opposing"></div>2</div>
+							</div>
+							<div ng-cloak class="simulation">
+								<h6>Punteggi possibili</h6>
+								<div ng-repeat="(key, value) in simulation('<%= label %>')"><span ng-bind-html="trust(key)"></span><br><span>{{value}}</span></div>
+							</div>
+							<rzslider rz-slider-model="sliders['<%= label %>'].minValue"
+							rz-slider-high="sliders['<%= label %>'].maxValue"
+							rz-slider-options="sliders['<%= label %>'].options"></rzslider>
+						</li>
+						<% } %>
+					</ul>
+					<% if (active.length == 0) { %>
+					<div class="not">Non ci sono scommesse<br><br>in questo momento :)</div>
+					<%  }
+					} %>
+				</div>
+			</section>
+			<section class="mdl-layout__tab-panel" id="past-bets">
+				<div class="page-content">
+					<% 	function win(results,week,match,i){
+					return results[week] && results[week][match] && results[week][match][i] == 1 ? "win" : "";
+					}
+					for(var key in past) {
+					var wk = past[key]; %>
+					<h4>Settimana <%= key.split("-")[1] %></h4>
+					<ul style="padding: 0px">
+						<% for(var match in wk) { var bet = wk[match]; %>
+						<li class="list-item mdl-shadow--2dp">
+							<div class="half <%= win(results,key,match,0) %>"><b><%= match.split(":")[0] %></b><br><%= bet[0] %></div>
+							<div class="half <%= win(results,key,match,1) %>"><b>X</b><br><%= bet[1] %></div>
+							<div class="half <%= win(results,key,match,2) %>"><b><%= match.split(":")[1] %></b><br><%= bet[2] %></div>
+						</li>
+						<% } %>
+					</ul>
+					<% } %>
+				</div>
+			</section>
+			<section class="mdl-layout__tab-panel" id="rank-cumulative">
+				<div class="page-content">
+					<center>
+					<%  var temp = week;
+					while(temp > 0 && !rank_cumulative.m_prognostic["week-"+temp]) temp--;
+					var wS = "week-"+temp;
+					if(rank_cumulative.m_prognostic[wS]) { %>
+					<h4>Statistiche <small>(Settimana <%= temp %>)</small></h4>
+					<div class="stats table-div mdl-shadow--2dp">
+						<div class="table-row">
+							<div>Punteggio Medio Settimanale</div>
+							<div><%= rank_cumulative.m_score[wS].toFixed(0) %></div>
+						</div>
+						<div class="table-row">
+							<div>Vincita Media Settimanale</div>
+							<div><%= rank_cumulative.m_wins[wS] %>€</div>
+						</div>
+						<div class="table-row">
+							<div>Pronostico Medio</div>
+							<div>
+								<% for(var match in rank_cumulative.m_prognostic[wS]) {
+								var r = rank_cumulative.m_prognostic[wS][match]; %>
+								<li><b><%= match.replace(":"," - ") %></b><br>[ <%= r.p1.toFixed(0) %> , <%= r.px.toFixed(0) %> , <%= r.p2.toFixed(0) %> ]</li>
+								<br>
+								<% } %>
+							</div>
+						</div>
+						<div class="table-row">
+							<div>Punteggio Pronostico Medio</div>
+							<div>
+								<% for(var match in rank_cumulative.m_prognostic[wS]) { %>
+								<li><b><%= match.replace(":"," - ") %></b> : <%= rank_cumulative.score_m_prognostic[wS][match].toFixed(0) %></li>
+								<br>
+								<% } %>
+							</div>
+						</div>
+					</div>
+					<h4>Classifica <small>(Settimana <%= temp %>)</small></h4>
+					<div class="rank table-div mdl-shadow--2dp">
+						<% for(var i = 0; i < rank_cumulative.data.length; i++) {
+						var user = rank_cumulative.data[i];
+						var realCash = user.cash[wS] - 1; %>
+						<div toggle-class="prognostic-active" class="table-row <%= realCash < 0 && (user.from||1) <= temp ? 'lost' : '' %>">
+							<div><%= i+1 %></div>
+							<div><%= user.name %>
+							<br>
+							<% if((user.from||1) <= temp) { %>
+							<ul>
+								<% for(var match in user.prognostics[wS]) {
+										var r = user.prognostics[wS][match]; %>
+								<li><b><%= match.replace(":"," - ") %></b> [ <%= r[0]+ ' , ' + r[1]+ ' , ' + r[2]+ ' '%> ]</li>
+								<br>
+								<% } %>
+							</ul>
+							<% } %>
+							</div>
+							<div><%= user.score.toFixed(2) %></div>
+							<div><%= realCash < 0 ? '' : '+'%><%= (user.from||1) <= temp ? realCash.toFixed(2) + '€' : 'ASSENTE' %></div>
+						</div>
+						<% } %>
+					</div>
+					<% } else { %>
+					<h4 style="text-align: center">
+					Classifica non disponibile<br><small>(Risultati partite non ancora presenti)</small>
+					</h4>
+					<% } %>
+					</center>
+				</div>
+			</section>
+			<section class="mdl-layout__tab-panel" id="rank-euclidea">
+				<div class="page-content">
+					<center>
+					<h4 style="text-align: center">
+					Solo informativa<br><small>(non ha valore per il guadagno)</small>
+					</h4>
+					<table class="mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
+						<tbody>
+							<% for(var i = 0; i < rank_euclide.length; i++) { var user = rank_euclide[i]; %>
+							<tr>
+								<td><%= i+1 %> - <%= user.name %></td>
+								<td class="right"><%= user.score.toFixed(2) %></td>
+							</tr>
+							<% } %>
+						</tbody>
+					</table>
+					</center>
+				</div>
+			</section>
+			</main>
+		</div>
+		
+	</body>
+</html>

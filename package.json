@@ -1,0 +1,27 @@
+{
+  "name": "probexp",
+  "version": "1.0.0",
+  "description": "backend for probabilistic experiment",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Francesco Cannizzaro",
+  "license": "MIT",
+  "dependencies": {
+    "basic-auth": "^1.0.3",
+    "body-parser": "^1.15.0",
+    "cookie-parser": "^1.4.1",
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "mongoose": "^4.4.9",
+    "paypal-rest-sdk": "^1.6.8",
+    "request": "^2.69.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0"
+  }
+}

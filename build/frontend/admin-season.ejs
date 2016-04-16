@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<%- include head.ejs %>
+	</head>
+	<script type="text/javascript">
+		function inc(ele,team,operation){
+		
+			var val = parseInt(ele.textContent),
+			req = new XMLHttpRequest();
+
+			ele.textContent  = ++val;
+
+			req.open("POST", "/team", true);
+			req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			req.send("team=" + team + "&operation=" + operation);
+
+		}
+	</script>
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+		<header class="mdl-layout__header">
+			<div class="mdl-layout__header-row">
+				<span class="mdl-layout-title back">Admin > Teams</span>
+			</div>	
+		</header>
+		<main class="mdl-layout__content">
+			<div class="page-content">
+				<center>
+				<table class="no-sel result-table mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
+					<thead>
+						<tr>
+							<th>Squadra</th>
+							<th class="green"><div>V</div></th>
+							<th class="neutral"><div>P</div></th>
+							<th class="red"><div>S</div></th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(var team in season){
+						var result = season[team]; %>
+						<tr>
+							<td><%= team %></td>
+							<td class="hov"><div onclick="inc(this, '<%= team %>', 'V')"><%= result[0] %></div></td>
+							<td class="hov"><div onclick="inc(this, '<%= team %>', 'P')"><%= result[1] %></div></td>
+							<td class="hov"><div onclick="inc(this, '<%= team %>', 'S')"><%= result[2] %></div></td>
+						</tr>
+						<% } %>
+					</tbody>
+				</table>
+				</center>
+			</div>
+		</main>
+	</div>	
+</body>
+</html>

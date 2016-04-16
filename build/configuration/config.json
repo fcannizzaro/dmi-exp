@@ -1,0 +1,17 @@
+{
+    "frontend": {
+        "google_app_id": "145632116950-dbk1q1bgf0830hmbpudsaos6vj8adtfe.apps.googleusercontent.com"
+    },
+    "backend": {
+        "day": 6,
+        "time": 12,
+        "paypal_client_id": "///",
+        "paypal_client_secret": "///",
+        "mongodb_url": "///",
+        "project_start": "2016-03-28",
+        "admin_auth": ["francescosaverio.cannizzaro@community.unipa.it", "metabacchi@gmail.com", "mirko.zichichi@community.unipa.it", "mikerz83@gmail.com"],
+        "team_auth": ["francescosaverio.cannizzaro@community.unipa.it", "aurora.paternostro@community.unipa.it"],
+        "email_auth": ["francescosaverio.cannizzaro@community.unipa.it", "pietromessineo@community.unipa.it"]
+    },
+    "environment": "dmi-exp.herokuapp.com"
+}

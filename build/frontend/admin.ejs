@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<%- include head.ejs %>
+		<script type="text/javascript" src="js/admin.js"></script>
+	</head>
+	<body>
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<span class="mdl-layout-title">Admin > Risultati</span>
+				</div>
+			</header>
+			<main class="mdl-layout__content">
+			<div class="page-content">
+				<% function isCompleted(week){ 
+				   for(var match in week)
+						if(week[match].length == 0)
+							return false;
+					return true;
+				} 
+				
+				for (var week in matches) { %>
+				<% if (!isCompleted(matches[week])) { %>
+				<center>
+				<h4 class="result">Settimana <%= week.split("-")[1] %></h4>
+				<table class="res-table mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+					<tbody>
+						<% for (var match in matches[week] ) { var m = matches[week][match]; %>
+						<tr <%- m.length > 0 ? "style='display:none'" : "" %>>
+							<td>
+								
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="score-1-<%= match %>-<%=week %>">
+									<input type="radio" id="score-1-<%= match %>-<%=week %>" value="1" class="mdl-radio__button" name="<%= match %>-<%=week %>" value="1">
+									<span class="mdl-radio__label"><%= match.split(":")[0] %></span>
+								</label>
+								
+							</td>
+							<td>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="score-x-<%= match %>-<%=week %>">
+									<input type="radio" id="score-x-<%= match %>-<%=week %>" value="X" class="mdl-radio__button" name="<%= match %>-<%=week %>" value="1">
+									<span class="mdl-radio__label">X</span>
+								</label>
+							</td>
+							<td>
+								<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="score-2-<%= match %>-<%=week %>">
+									<input type="radio" id="score-2-<%= match %>-<%=week %>" value="2" class="mdl-radio__button" name="<%= match %>-<%=week %>" value="1">
+									<span class="mdl-radio__label"><%= match.split(":")[1] %></span>
+								</label>
+							</td>
+							<td>
+								<button onclick="save( '<%= week %>','<%= match %>')" class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
+								<i class="material-icons">save</i>
+								</button>
+							</td>
+						</tr>
+						<% } %>
+						<% } %>
+					</tbody>
+				</table>
+				</center>
+				<% } %>
+			</div>
+			</main>
+		</div>
+	</body>
+</html>

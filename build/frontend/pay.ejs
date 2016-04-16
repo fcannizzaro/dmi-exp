@@ -1,0 +1,67 @@
+<html ng-app="dmi-exp">
+	<head>
+		<%- include head.ejs %>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
+		<script type="text/javascript" src="js/pay.js"></script>
+	</head>
+	<body ng-controller="ctrl">
+		
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<span class="mdl-layout-title back">Quota Partecipazione</span>
+				</div>
+			</header>
+			<main class="mdl-layout__content">
+			<section class="mdl-layout__tab-panel is-active" id="season-2015">
+				<div class="page-content">
+					<center>
+					<div class="pay-card mdl-shadow--2dp">
+						<h4>Paga per</h4>
+						<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="me">
+							<input type="checkbox" id="me" class="mdl-checkbox__input" ng-model="body.me">
+							<span class="mdl-checkbox__label">Me</span>
+						</label>
+						<br><br>
+						E-mails colleghi<br>
+						<b class="pay-legend">Valido solo per utenti <u>già iscritti</u>!</b><br>
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" ng-model="body.emails[0]" id="collega1">
+							<label class="mdl-textfield__label" for="collega1">Collega</label>
+						</div>
+						<br>
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" ng-model="body.emails[1]" id="collega2">
+							<label class="mdl-textfield__label" for="collega2">Collega</label>
+						</div>
+						<br>
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" ng-model="body.emails[2]" id="collega3">
+							<label class="mdl-textfield__label" for="collega3">Collega</label>
+						</div>
+						<br>
+						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+							<input class="mdl-textfield__input" type="text" ng-model="body.emails[3]" id="collega4">
+							<label class="mdl-textfield__label" for="collega4">Collega</label>
+						</div>
+						<br>
+						<div class="amount">{{body.emails.length * 7 + (body.me ? 7 : 0)}}€</div>
+						<br>
+						<div ng-show="loading">
+							<br>
+							<center><div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div></center>
+							<br>
+							<br>
+						</div>
+
+						<button ng-click="pay()" class="pay-right mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+						PAGA
+						</button>
+					</div>
+					</center>
+				</div>
+			</section>
+			</main>
+		</div>
+	</body>
+</html>

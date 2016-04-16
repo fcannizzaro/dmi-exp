@@ -1,0 +1,6 @@
+{
+    "name": "DMI Exp",
+    "description": "University Project",
+    "logo": "http://node-js-sample.herokuapp.com/node.svg",
+    "image": "heroku/nodejs"
+}

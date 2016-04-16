@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<%- include head.ejs %>
+	</head>
+	<body>
+		
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<span class="mdl-layout-title back">Pagamento Paypal</span>
+				</div>
+			</header>
+			<main class="mdl-layout__content">
+			<section class="mdl-layout__tab-panel is-active" id="season-2015">
+				<div class="page-content">
+					<center>
+					<div class="pay-card payment mdl-shadow--2dp">
+						<% if (success) { %>
+						
+						<h4>Pagamento riuscito</h4>
+
+						<% for(var i in names) { %>
+							<li><%= names[i] %></li>
+						<% }  %>
+						
+						<br>
+
+						<a href="/">
+							<button class="pay-right mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+								OK
+							</button>
+						</a>
+
+						<% } else { %>
+
+						<h4>Pagamento non riuscito</h4>
+						<small>Controlla il tuo saldo</small><br><br>
+						
+						<a href="/pay">
+							<button class="pay-right mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+								RIPROVA
+							</button>
+						</a>
+
+						<% }  %>					
+
+					</div>
+					</center>
+				</div>
+			</section>
+			</main>
+		</div>
+	</body>
+</html>

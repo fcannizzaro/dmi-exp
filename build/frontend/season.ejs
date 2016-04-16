@@ -1,0 +1,74 @@
+<html>
+	<head>
+		<%- include head.ejs %>
+	</head>
+	<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+		<header class="mdl-layout__header">
+			<div class="mdl-layout__header-row">
+				<span class="mdl-layout-title back">Risultati Stagioni</span>
+			</div>
+			<div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+				<a href="#season-2015" class="mdl-layout__tab is-active">2015/2016</a>
+				<a href="#season-2014" class="mdl-layout__tab">2014/2015</a>
+			</div>
+		</header>
+		<main class="mdl-layout__content">
+		<section class="mdl-layout__tab-panel is-active" id="season-2015">
+			<div class="page-content">
+				<center>
+				<table class="result-table mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
+					<thead>
+						<tr>
+							<th>Squadra</th>
+							<th class="green"><div>V</div></th>
+							<th class="neutral"><div>P</div></th>
+							<th class="red"><div>S</div></th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(var team in season){
+						var result = season[team]; %>
+						<tr>
+							<td><%= team %></td>
+							<td><%= result[0] %></td>
+							<td><%= result[1] %></td>
+							<td><%= result[2] %></td>
+						</tr>
+						<% } %>
+					</tbody>
+				</table>
+				</center>
+			</div>
+		</section>
+		<section class="mdl-layout__tab-panel is-active" id="season-2014">
+			<div class="page-content">
+				<center>
+				<table class="result-table mdl-data-table mdl-js-data-table mdl-data-table mdl-shadow--2dp">
+					<thead>
+						<tr>
+							<th>Squadra</th>
+							<th class="green"><div>V</div></th>
+							<th class="neutral"><div>P</div></th>
+							<th class="red"><div>S</div></th>
+						</tr>
+					</thead>
+					<tbody>
+						<% for(var team in season2014){
+						var result = season2014[team]; %>
+						<tr>
+							<td><%= team %></td>
+							<td><%= result[0] %></td>
+							<td><%= result[1] %></td>
+							<td><%= result[2] %></td>
+						</tr>
+						<% } %>
+					</tbody>
+				</table>
+				</center>
+			</div>
+		</section>
+		</main>
+	</div>
+	
+</body>
+</html>
