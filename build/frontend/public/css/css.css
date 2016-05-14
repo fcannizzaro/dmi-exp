@@ -36,6 +36,13 @@
 	display: table-row;
 }
 
+.table-row.head{
+	font-size: 14px;
+	border-radius: 50%;
+	background: #f4f4f4;
+	font-weight: bold !important;
+}
+
 .rank{
 	cursor: pointer;
 }
@@ -47,8 +54,9 @@
 	vertical-align: middle;
 }
 
-.table-row.lost div{
-	background: #FFEBEE;
+.lost{
+	color: #E53935 !important;
+	font-weight: bold;
 }
 
 .table-row div:nth-child(1){
@@ -585,4 +593,8 @@ h4.week{
 
 .pay-right{
 	float: right;
+}
+
+#story .table-row div{
+	text-align: center;
 }

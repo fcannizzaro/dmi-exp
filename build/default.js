@@ -1,8 +1,6 @@
-var access, asMatch, backend, basicAuth, config, express, isAdminAuth, isEmailAuth, isTeamAuth, isValid, payment, paypal, ranking, request, result, router, sortObject, toPayment, unlockEmails, user, utils;
+var access, asMatch, backend, config, express, isAdminAuth, isEmailAuth, isTeamAuth, isValid, payment, paypal, ranking, request, result, router, sortObject, toPayment, unlockEmails, user, utils;
 
 user = require("./user");
-
-basicAuth = require('basic-auth');
 
 payment = require("./payment");
 
@@ -252,21 +250,24 @@ router.get("/", function(req, res) {
 });
 
 router.get("/pay", function(req, res) {
-  if (req.user.paid) {
-    return res.redirect("/");
-  } else {
-    return res.render("pay");
-  }
+  return res.render("pay");
 });
 
 isValid = function(today) {
-  var day, month, todayAt12;
+  var day, month, ref, todayAt12;
   day = today.getUTCDate();
   month = today.getUTCMonth() + 1;
-  todayAt12 = new Date("2016-" + month + "-" + day + " 12:00");
+  todayAt12 = new Date("2016-" + month + "-" + day);
+  todayAt12.setHours(13);
   day = today.getDay();
-  return day < backend.day || day === backend.day && today < todayAt12;
+  return day === backend.day && today < todayAt12 || (day !== (ref = backend.day) && ref !== day) && day > 0;
 };
+
+router.get("/week", function(req, res) {
+  return res.json({
+    week: utils.calcWeek(new Date()) + 1
+  });
+});
 
 router.get("/admin/season", function(req, res) {
   if (!isTeamAuth(req)) {
@@ -411,12 +412,14 @@ router.post("/bet", function(req, res) {
 });
 
 router.post("/pay", function(req, res) {
-  var emails, quote;
+  var emails, quote, today, week;
   emails = req.body.emails || [];
   if (req.body.me) {
     emails.push(req.user.email);
   }
-  quote = 7 * emails.length;
+  today = new Date();
+  week = utils.calcWeek(today) + 1;
+  quote = week * emails.length;
   quote = quote + ".00";
   return paypal.payment.create(toPayment(quote, emails), function(error, result) {
     if (error) {
@@ -427,7 +430,7 @@ router.post("/pay", function(req, res) {
     if (result.payer.payment_method === "paypal") {
       return new payment({
         id: result.id,
-        created: new Date().toString(),
+        created: today.toString(),
         quote: quote,
         emails: emails
       }).save(function(err, doc) {

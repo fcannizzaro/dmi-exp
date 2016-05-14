@@ -1,5 +1,4 @@
 user = require "./user"
-basicAuth = require 'basic-auth'
 payment = require "./payment"
 result = require "./result"
 express = require "express"
@@ -173,17 +172,18 @@ router.get "/", (req, res) ->
                     rank_euclide : rank_euclide
                 
 router.get "/pay", (req, res) -> 
-    if req.user.paid
-        res.redirect "/"
-    else
-        res.render "pay"
+    res.render "pay"
 
 isValid = (today) -> 
     day = today.getUTCDate()
     month = today.getUTCMonth() + 1
-    todayAt12 = new Date("2016-#{month}-#{day} 12:00")
+    todayAt12 = new Date("2016-#{month}-#{day}")
+    todayAt12.setHours 13
     day = today.getDay()
-    day < backend.day || day == backend.day && today < todayAt12
+    day == backend.day && today < todayAt12 || day != backend.day != day && day> 0
+
+router.get "/week", (req, res) ->
+    res.json week : utils.calcWeek(new Date()) + 1
 
 router.get "/admin/season", (req, res) ->
 
@@ -274,8 +274,11 @@ router.post "/pay", (req, res) ->
 
     if req.body.me
         emails.push req.user.email
+    
+    today = new Date()
+    week = utils.calcWeek(today) + 1
 
-    quote = 7 * emails.length
+    quote = week * emails.length
     quote = "#{quote}.00";
 
     paypal.payment.create toPayment(quote, emails), (error, result) ->
@@ -286,7 +289,7 @@ router.post "/pay", (req, res) ->
 
             new payment
                 id: result.id
-                created: new Date().toString()
+                created: today.toString()
                 quote: quote
                 emails: emails
 

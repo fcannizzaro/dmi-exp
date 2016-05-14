@@ -102,7 +102,6 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
         ts = [],
         tt = 0;
     w = 0;
-    gioc_week = 0;
     var min_score, lista_score_mancanti = [];
     var numero_giocatori = 0,
         numero_partite;
@@ -119,17 +118,12 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
         pronostici[i] = [];
     }
 
+
     for (var week in array_risultati) {
         w++;
         numero_partite = 0;
-        gioc_week = 0;
         for (var i = 0; i < numero_giocatori; i++) {
             pronostici[i][week] = [];
-        }
-        for (var giocatore in array_giocatori) {
-            if ((array_giocatori[giocatore]["from"] || 1) <= w)
-                gioc_week++;
-
         }
 
         d = 0;
@@ -163,9 +157,8 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
                     temp[c] = array_giocatori[giocatore]["name"];
                     temp2[c] = 0;
                     temp3[c] = [];
-                    temp4[c] = array_giocatori[giocatore]["from"];
+                    temp4[c] = [];
                 }
-
                 var p = [];
 
                 if (array_giocatori[giocatore]["bets"] && array_giocatori[giocatore]["bets"][week] && array_giocatori[giocatore]["bets"][week][partita]) {
@@ -180,7 +173,6 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
                         p_med[week][partita]["px"] += p[1];
                         p_med[week][partita]["p2"] += p[2];
                         tt = scoreT(p[0] / 100, p[1] / 100, p[2] / 100, e[0], e[1], e[2]);
-                        temp2[c] += tt;
                         ts[c] += tt;
                     } else {
                         score_non_valido = 1;
@@ -204,9 +196,8 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
             p_med[week][partita]["p2"] = p_med[week][partita]["p2"] / cc;
 
             sp_med[week][partita] = scoreT(p_med[week][partita]["p1"] / 100, p_med[week][partita]["px"] / 100, p_med[week][partita]["p2"] / 100, e[0], e[1], e[2]);
-
-            iniz_giocatori = 1;
         }
+        iniz_giocatori = 1;
 
         min_score = 1000;
         for (var i = 0; i < numero_giocatori; i++) {
@@ -229,8 +220,15 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
         }
         somma_punteggi[week] = Math.ceil(100 * somma_punteggi[week] / numero_giocatori) / 100;
 
-        var sum = 0;
+        var sum = 0,
+            gioc_week = numero_giocatori;
         min_score = 1000;
+        for (var giocatore in array_giocatori) {
+            if ((array_giocatori[giocatore]["from"] || 1) > w) {
+                gioc_week--;
+            }
+        }
+
         for (var i = 0; i < c; i++) {
             if (ts[i] <= min_score && ts[i] >= 0) {
                 min_score = ts[i];
@@ -239,9 +237,14 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
         for (var i = 0; i < c; i++)
             if (ts[i] > -1) {
                 temp3[i][week] = (ts[i] - min_score);
+                temp4[i][week] = ts[i];
                 sum += temp3[i][week];
-            } else
+            } else {
                 temp3[i][week] = 0;
+                temp4[i][week] = min_score;
+            }
+
+
         if (sum > 0) {
             for (var i = 0; i < c; i++)
                 temp3[i][week] = Math.floor(100 * temp3[i][week] * quota_settimanale * gioc_week / sum) / 100;
@@ -260,16 +263,24 @@ function calcola_classifica_scoreT(array_giocatori, array_risultati) {
             somma_vincite[week] += temp3[i][week];
         somma_vincite[week] = Math.floor(100 * somma_vincite[week] / numero_giocatori) / 100;
     }
+    var i = 0;
+    for (var giocatore in array_giocatori) {
+        temp2[i] = 0;
+        for (var week in array_risultati) {
+            temp2[i] += temp4[i][week];
+        }
+        i++;
+    }
 
     array = [];
 
     for (var i = 0; i < c; i++)
         array.push({
-            name: temp[i],
-            score: Math.ceil(100 * temp2[i]) / 100,
-            cash: temp3[i],
-            prognostics: pronostici[i],
-            from: temp4[i]
+            "name": temp[i],
+            "score": Math.ceil(100 * temp2[i]) / 100,
+            "week_score": temp4[i],
+            "cash": temp3[i],
+            "prognostics": pronostici[i]
         });
 
     array.sort(function(a, b) {

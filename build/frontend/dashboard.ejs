@@ -18,6 +18,7 @@
 					<a href="#past-bets" class="mdl-layout__tab">Scommesse passate</a>
 					<a href="#rank-cumulative" class="mdl-layout__tab">Classifica RPS</a>
 					<a href="#rank-euclidea" class="mdl-layout__tab">Euclidea *</a>
+					<a href="#story" class="mdl-layout__tab">Storico</a>
 				</div>
 			</header>
 			<main class="mdl-layout__content">
@@ -76,7 +77,7 @@
 			<section class="mdl-layout__tab-panel" id="past-bets">
 				<div class="page-content">
 					<% 	function win(results,week,match,i){
-					return results[week] && results[week][match] && results[week][match][i] == 1 ? "win" : "";
+						return results[week] && results[week][match] && results[week][match][i] == 1 ? "win" : "";
 					}
 					for(var key in past) {
 					var wk = past[key]; %>
@@ -135,22 +136,25 @@
 						<% for(var i = 0; i < rank_cumulative.data.length; i++) {
 						var user = rank_cumulative.data[i];
 						var realCash = user.cash[wS] - 1; %>
-						<div toggle-class="prognostic-active" class="table-row <%= realCash < 0 && (user.from||1) <= temp ? 'lost' : '' %>">
+						<div toggle-class="prognostic-active" class="table-row">
 							<div><%= i+1 %></div>
 							<div><%= user.name %>
-							<br>
-							<% if((user.from||1) <= temp) { %>
-							<ul>
-								<% for(var match in user.prognostics[wS]) {
-										var r = user.prognostics[wS][match]; %>
-								<li><b><%= match.replace(":"," - ") %></b> [ <%= r[0]+ ' , ' + r[1]+ ' , ' + r[2]+ ' '%> ]</li>
 								<br>
+								<% if((user.from||1) <= temp) { %>
+								<ul>
+									<% for(var match in user.prognostics[wS]) {
+									var r = user.prognostics[wS][match];
+									if(r[0] != undefined) { %>
+									<li><b><%= match.replace(":"," - ") %></b> [ <%= r[0] + ' , ' + r[1] + ' , ' + r[2] + ' '%> ]</li>
+									<br>
+									<% } else { realCash = null; %>
+									//<br>
+									<%	} } %>
+								</ul>
 								<% } %>
-							</ul>
-							<% } %>
 							</div>
 							<div><%= user.score.toFixed(2) %></div>
-							<div><%= realCash < 0 ? '' : '+'%><%= (user.from||1) <= temp ? realCash.toFixed(2) + '€' : 'ASSENTE' %></div>
+							<div class="<%= realCash < 0 && (user.from||1) <= temp ? 'lost' : '' %>"><%= realCash != null && (user.from||1) <= temp ? (realCash < 0 ? '' : '+') + realCash.toFixed(2) + '€' : '//' %></div>
 						</div>
 						<% } %>
 					</div>
@@ -162,6 +166,14 @@
 					</center>
 				</div>
 			</section>
+			<% function cash(value){
+				var c = value - 1;
+				return value != undefined ? (c > 0 ? '+' : '') + c.toFixed(2) + '€' : '//';
+			}
+			function lost(value){
+				return value != undefined && value - 1 < 0;	
+			}
+			%>
 			<section class="mdl-layout__tab-panel" id="rank-euclidea">
 				<div class="page-content">
 					<center>
@@ -178,6 +190,29 @@
 							<% } %>
 						</tbody>
 					</table>
+					</center>
+				</div>
+			</section>
+			<section class="mdl-layout__tab-panel" id="story">
+				<div class="page-content">
+					<center>
+					<div class="rank table-div mdl-shadow--2dp">
+						<div class="table-row head">
+							<div></div>
+							<% for(var j = 1; j <= temp; j++) { %>
+							<div><%= j %></div>
+							<% } %>
+						</div>
+						<% for(var i = 0; i < rank_cumulative.data.length; i++) {
+						var user = rank_cumulative.data[i]; %>
+						<div class="table-row">
+							<div><%= user.name %></div>
+							<% for(var j = 1; j <= temp; j++) { %>
+							<div><%= user.week_score["week-"+j].toFixed(2) %></div>
+							<% } %>
+						</div>
+						<% } %>
+					</div>
 					</center>
 				</div>
 			</section>
